@@ -1,0 +1,27 @@
+:local(.root) {
+  height: 100%;
+  width: 100%;
+}
+
+:local(.controls) {
+  position: fixed;
+  top: 1em;
+  right: 1em;
+}
+
+:local(.column) {
+  flex: 0;
+}
+
+:local(.column > :not(:last-child)) {
+  margin-bottom: -4px;
+}
+
+:local(.map) {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-flow: row;
+  align-items: center;
+  justify-content: center;
+}

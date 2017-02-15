@@ -1,18 +1,15 @@
 // @flow
 
 import React, { Component } from 'react';
-import './styles.css';
+import Map from '../Map';
+import styles from './styles.css';
+import { propeller as propellerCells } from '../../lib/maps';
 
 export default class App extends Component {
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div className={styles.root}>
+        <Map cells={propellerCells} />
       </div>
     );
   }
