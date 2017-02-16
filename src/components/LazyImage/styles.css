@@ -1,0 +1,8 @@
+:local(.root) {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+:local(.shown) {
+  opacity: 1;
+}

@@ -1,12 +1,14 @@
 :local(.root) {
   height: 100%;
   width: 100%;
+  cursor: grab;
 }
 
 :local(.controls) {
   position: fixed;
   top: 1em;
   right: 1em;
+  z-index: 2;
 }
 
 :local(.column) {
@@ -24,4 +26,8 @@
   flex-flow: row;
   align-items: center;
   justify-content: center;
+}
+
+:local(.grabbing) {
+  cursor: grabbing;
 }

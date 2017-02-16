@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import LazyImage from '../LazyImage';
 import styles from './styles.css';
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
 };
 
 const Cell = ({ data }: Props) => (
-  <img src={data.src} role="presentation" className={styles.root} />
+  <LazyImage src={data.src} className={styles.root} />
 );
 
 export default Cell;

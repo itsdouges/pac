@@ -6,12 +6,12 @@ type Props = {
   className?: string,
   onIncrease: () => void,
   onDecrease: () => void,
-  level: number,
+  children?: any,
 };
 
-const MapControls = ({ className, level, onIncrease, onDecrease }: Props) => (
+const MapControls = ({ className, onIncrease, onDecrease, children }: Props) => (
   <div className={className}>
-    {level}
+    {children}
     <button onClick={onDecrease}>-</button>
     <button onClick={onIncrease}>+</button>
   </div>
