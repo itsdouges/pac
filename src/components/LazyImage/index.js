@@ -7,7 +7,6 @@ type Props = {
   src: string,
   className?: string,
   draggable?: boolean,
-  provideCallback?: (() => void) => void,
   checkInViewport?: boolean,
 };
 
@@ -23,9 +22,6 @@ export default class LazyImage extends Component {
   };
 
   componentDidMount () {
-    const { provideCallback } = this.props;
-    provideCallback && provideCallback(this.calculateShown);
-
     this.calculateShown();
   }
 

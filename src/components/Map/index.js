@@ -8,7 +8,7 @@ import cx from 'classnames';
 import styles from './styles.css';
 import Controls from '../Controls';
 import Cell from '../Cell';
-import { attachWheelEvent, attachPanEvent, styleTransform } from '../../lib/dom';
+import { attachWheelEvent, attachPanEvents, styleTransform } from '../../lib/dom';
 import { roundToOne } from '../../lib/math';
 
 type Props = {
@@ -24,6 +24,8 @@ type State = {
   calculateCellsInViewport: boolean,
 };
 
+const ZOOM_DIVISOR = 500;
+
 const humanifyZoom = (zoom, offset) => {
   const roundedZoom = roundToOne(zoom);
   const normalizedZoom = roundedZoom % 1 === 0 ? `${roundedZoom}.0` : roundedZoom;
@@ -32,7 +34,7 @@ const humanifyZoom = (zoom, offset) => {
 
 export default class Map extends Component {
   _detatchWheelEvent: () => void;
-  _detatchPanEvent: () => void;
+  _detatchPanEvents: () => void;
   _container: HTMLElement;
 
   deltaOffsetX: number = 0;
@@ -49,12 +51,12 @@ export default class Map extends Component {
 
   componentDidMount () {
     this._detatchWheelEvent = attachWheelEvent(window, this.onWheel);
-    this._detatchPanEvent = attachPanEvent(this._container, this.onPan, this.onPanEnd);
+    this._detatchPanEvents = attachPanEvents(this._container, this.onPan, this.onPanEnd);
   }
 
   componentWillUnmount () {
     this._detatchWheelEvent();
-    this._detatchPanEvent();
+    this._detatchPanEvents();
   }
 
   onPanEnd = (e: any) => {
@@ -83,11 +85,10 @@ export default class Map extends Component {
     const { cells } = this.props;
 
     // $FlowFixMe - Spreading the array is valid syntax !
-    const maxLevel = Math.max(...Object.keys(cells));
+    const levelCap = Math.max(...Object.keys(cells));
 
-    let newZoom = zoom + (e.deltaY / 500);
-
-    if (newZoom >= 2 && level < maxLevel) {
+    let newZoom = zoom + (e.deltaY / ZOOM_DIVISOR);
+    if (newZoom >= 2 && level < levelCap) {
       this.increaseLevel();
       newZoom = 1;
     } else if (level > 0 && newZoom < 1) {
