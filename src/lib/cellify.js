@@ -24,7 +24,5 @@ export default function cellify (context: any): Cells {
     };
   }, {});
 
-  console.log(cells);
-
   return cells;
 }

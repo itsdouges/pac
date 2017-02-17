@@ -3,13 +3,18 @@
 import Hammer from 'hammerjs';
 
 export function withinViewport (element?: ?HTMLElement): boolean {
-  return true;
-  // if (!element) {
-  //   return false;
-  // }
+  if (!element) {
+    return false;
+  }
 
-  // const { top, bottom } = element.getBoundingClientRect();
-  // return top > 0 || bottom > 0;
+  const box = element.getBoundingClientRect();
+
+  const topInside = box.top < window.innerHeight + box.height;
+  const rightInside = box.right < window.innerWidth + box.width;
+  const bottomInside = box.bottom > -box.height;
+  const leftInside = box.left > -box.width;
+
+  return topInside && bottomInside && leftInside && rightInside;
 }
 
 export function attachWheelEvent (element: HTMLElement, cb: (WheelEvent) => void) {

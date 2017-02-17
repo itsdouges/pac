@@ -9,6 +9,8 @@ type Props = {
   src: string,
   className?: string,
   draggable?: boolean,
+  provideCallback?: (() => void) => void,
+  panEnd: boolean,
 };
 
 type State = {
@@ -23,6 +25,21 @@ export default class LazyImage extends Component {
   };
 
   componentDidMount () {
+    const { provideCallback } = this.props;
+    provideCallback && provideCallback(this.calculateShown);
+
+    this.calculateShown();
+  }
+
+  shouldComponentUpdate (nextProps: Props, nextState: State) {
+    return (
+      (nextState.shown && !this.state.shown)
+      || nextProps.src !== this.props.src
+      || (nextProps.panEnd && !this.props.panEnd)
+    );
+  }
+
+  componentWillUpdate (nextProps: Props) {
     this.calculateShown();
   }
 

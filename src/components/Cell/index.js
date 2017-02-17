@@ -10,8 +10,8 @@ type Props = {
   },
 };
 
-const Cell = ({ data }: Props) => (
-  <LazyImage src={data.src} className={styles.root} />
+const Cell = ({ data, ...props }: Props) => (
+  <LazyImage src={data.src} className={styles.root} {...props} />
 );
 
 export default Cell;

@@ -22,18 +22,20 @@ type State = {
   x: number,
   y: number,
   grabbing: boolean,
+  panEnd: boolean,
 };
 
-function humanifyZoom (zoom, offset) {
+const humanifyZoom = (zoom, offset) => {
   const roundedZoom = roundOne(zoom);
   const normalizedZoom = roundedZoom % 1 === 0 ? `${roundedZoom}.0` : roundedZoom;
   return `${normalizedZoom}x`;
-}
+};
 
 export default class Map extends Component {
   _detatchWheelEvent: () => void;
   _detatchPanEvent: () => void;
   _container: HTMLElement;
+
   deltaOffsetX: number = 0;
   deltaOffsetY: number = 0;
 	props: Props;
@@ -43,11 +45,12 @@ export default class Map extends Component {
     zoom: 1,
     level: 0,
     grabbing: false,
+    panEnd: true,
   };
 
   componentDidMount () {
-    this._detatchWheelEvent = attachWheelEvent(window, throttle(this.zoom, 16));
-    this._detatchPanEvent = attachPanEvent(this._container, this.pan, this.panEnd);
+    this._detatchWheelEvent = attachWheelEvent(window, throttle(this.onWheel, 16));
+    this._detatchPanEvent = attachPanEvent(this._container, this.onPan, this.onPanEnd);
   }
 
   componentWillUnmount () {
@@ -55,28 +58,33 @@ export default class Map extends Component {
     this._detatchPanEvent();
   }
 
-  panEnd = (e: any) => {
+  onPanEnd = (e: any) => {
     this.deltaOffsetX = this.state.x;
     this.deltaOffsetY = this.state.y;
 
     this.setState({
       grabbing: false,
+      panEnd: true,
     });
   };
 
-  pan = (e: any) => {
+  onPan = (e: any) => {
     const { deltaX, deltaY } = e;
 
     this.setState({
       grabbing: true,
+      panEnd: false,
       x: this.deltaOffsetX + deltaX,
       y: this.deltaOffsetY + deltaY,
     });
   };
 
-  zoom = (e: WheelEvent) => {
+  onWheel = (e: WheelEvent) => {
     const { zoom, level } = this.state;
-    const maxLevel = 3;
+    const { cells } = this.props;
+
+    // $FlowFixMe - Spreading the array is valid syntax !
+    const maxLevel = Math.max(...Object.keys(cells));
 
     let newZoom = zoom + (e.deltaY / 500);
 
@@ -92,6 +100,7 @@ export default class Map extends Component {
 
     return this.setState({
       zoom: newZoom,
+      panEnd: true,
     });
   };
 
@@ -114,7 +123,7 @@ export default class Map extends Component {
   }
 
   render () {
-    const { level, zoom, x, y, grabbing } = this.state;
+    const { level, zoom, x, y, grabbing, panEnd } = this.state;
     const { cells } = this.props;
     const layerCells = cells[level];
 
@@ -135,7 +144,7 @@ export default class Map extends Component {
         <div className={styles.map} style={mapStyles}>
           {layerCells.map((column, index) => (
             <div className={styles.column} key={index}>
-              {column.map((row) => <Cell data={row} key={row.src} />)}
+              {column.map((row) => <Cell data={row} key={row.src} panEnd={panEnd} />)}
             </div>
           ))}
         </div>
