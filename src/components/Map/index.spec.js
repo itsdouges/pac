@@ -79,6 +79,12 @@ describe('<Map />', () => {
 
       });
     });
+
+    describe('finishing zoom', () => {
+      it('should notify cells zoom has finished', () => {
+
+      });
+    });
   });
 
   describe('interacting with buttons', () => {

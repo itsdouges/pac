@@ -4,6 +4,7 @@ import type { Cells } from '../../lib/cellify';
 
 import React, { Component } from 'react';
 import cx from 'classnames';
+import debounce from 'lodash/debounce';
 
 import styles from './styles.css';
 import Controls from '../Controls';
@@ -98,10 +99,19 @@ export default class Map extends Component {
       newZoom = 0.5;
     }
 
+    this.debouncedNotifyCells();
+
     return this.setState({
+      calculateCellsInViewport: false,
       zoom: newZoom,
     });
   };
+
+  debouncedNotifyCells = debounce(() => {
+    this.setState({
+      calculateCellsInViewport: true,
+    });
+  }, 100);
 
   increaseLevel = () => {
     const nextLevel = this.state.level + 1;
