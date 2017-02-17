@@ -1,6 +1,6 @@
 :local(.root) {
+  display: block;
   width: 256px;
   height: 256px;
-
-  background-color: orange;
+  background-color: #e0e0e0;
 }

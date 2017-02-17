@@ -31,3 +31,21 @@ export function attachPanEvent (element: HTMLElement, cb: (DragEvent) => void, c
     hammer.off('panend', cbEnd);
   };
 }
+
+type Transforms = Array<{
+  name: string,
+  options: Array<string | number>,
+}>;
+
+export function styleTransform (...transforms: Transforms) {
+  const transform = transforms.map(({ name, options }) => `${name}(${options.join(', ')})`)
+    .join(' ');
+
+  return {
+    transform,
+    WebkitTransform: transform,
+    MozTransform: transform,
+    msTransform: transform,
+    OTransform: transform,
+  };
+}

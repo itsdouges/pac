@@ -6,17 +6,13 @@
 
 :local(.controls) {
   position: fixed;
-  top: 1em;
-  right: 1em;
+  top: 0;
+  right: 0;
   z-index: 2;
 }
 
 :local(.column) {
   flex: 0;
-}
-
-:local(.column > :not(:last-child)) {
-  margin-bottom: -4px;
 }
 
 :local(.map) {
@@ -28,6 +24,6 @@
   justify-content: center;
 }
 
-:local(.grabbing) {
+:local(.panning) {
   cursor: grabbing;
 }

@@ -1,0 +1,35 @@
+:local(.root) {
+  display: flex;
+  align-items: center;
+
+  padding: 1em;
+  cursor: default;
+  background-color: rgba(255,221,0, 1);
+  border-radius: 0 0 0 12px;
+  border-left: 2px solid black;
+  border-bottom: 2px solid black;
+  font-weight: 100;
+}
+
+:local(.root > :not(:last-child)) {
+  margin-right: 1em;
+}
+
+:local(.logo) {
+  width: 80px;
+  height: 25.5px;
+}
+
+:local(.button) {
+  border: 2px solid black;
+  border-radius: 3px;
+  background: none;
+  cursor: pointer;
+  outline: none;
+}
+
+:local(.button:hover),
+:local(.button:focus) {
+  background: black;
+  color: rgba(255,221,0, 1);
+}

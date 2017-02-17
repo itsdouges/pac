@@ -3,14 +3,13 @@
 import type { Cells } from '../../lib/cellify';
 
 import React, { Component } from 'react';
-import throttle from 'lodash/throttle';
 import cx from 'classnames';
 
 import styles from './styles.css';
 import Controls from '../Controls';
 import Cell from '../Cell';
-import { attachWheelEvent, attachPanEvent } from '../../lib/dom';
-import { roundOne } from '../../lib/math';
+import { attachWheelEvent, attachPanEvent, styleTransform } from '../../lib/dom';
+import { roundToOne } from '../../lib/math';
 
 type Props = {
   cells: Cells,
@@ -21,12 +20,12 @@ type State = {
   level: number,
   x: number,
   y: number,
-  grabbing: boolean,
-  panEnd: boolean,
+  panning: boolean,
+  calculateCellsInViewport: boolean,
 };
 
 const humanifyZoom = (zoom, offset) => {
-  const roundedZoom = roundOne(zoom);
+  const roundedZoom = roundToOne(zoom);
   const normalizedZoom = roundedZoom % 1 === 0 ? `${roundedZoom}.0` : roundedZoom;
   return `${normalizedZoom}x`;
 };
@@ -44,12 +43,12 @@ export default class Map extends Component {
     y: 0,
     zoom: 1,
     level: 0,
-    grabbing: false,
-    panEnd: true,
+    panning: false,
+    calculateCellsInViewport: true,
   };
 
   componentDidMount () {
-    this._detatchWheelEvent = attachWheelEvent(window, throttle(this.onWheel, 16));
+    this._detatchWheelEvent = attachWheelEvent(window, this.onWheel);
     this._detatchPanEvent = attachPanEvent(this._container, this.onPan, this.onPanEnd);
   }
 
@@ -63,8 +62,8 @@ export default class Map extends Component {
     this.deltaOffsetY = this.state.y;
 
     this.setState({
-      grabbing: false,
-      panEnd: true,
+      panning: false,
+      calculateCellsInViewport: true,
     });
   };
 
@@ -72,8 +71,8 @@ export default class Map extends Component {
     const { deltaX, deltaY } = e;
 
     this.setState({
-      grabbing: true,
-      panEnd: false,
+      panning: true,
+      calculateCellsInViewport: false,
       x: this.deltaOffsetX + deltaX,
       y: this.deltaOffsetY + deltaY,
     });
@@ -100,7 +99,6 @@ export default class Map extends Component {
 
     return this.setState({
       zoom: newZoom,
-      panEnd: true,
     });
   };
 
@@ -123,28 +121,31 @@ export default class Map extends Component {
   }
 
   render () {
-    const { level, zoom, x, y, grabbing, panEnd } = this.state;
+    const { level, zoom, x, y, panning, calculateCellsInViewport } = this.state;
     const { cells } = this.props;
     const layerCells = cells[level];
 
-    const mapStyles = {
-      transform: `translate3d(${x}px, ${y}px, 0) scale(${zoom})`,
-    };
+    const mapStyles = styleTransform({
+      name: 'translate3d',
+      options: [`${x}px`, `${y}px`, 0],
+    }, {
+      name: 'scale',
+      options: [zoom],
+    });
 
     return (
-      <div className={cx(styles.root, { [styles.grabbing]: grabbing })} ref={(c) => (this._container = c)}>
+      <div className={cx(styles.root, { [styles.panning]: panning })} ref={(c) => (this._container = c)}>
         <Controls
           className={styles.controls}
           onIncrease={this.increaseLevel}
           onDecrease={this.decreaseLevel}
-        >
-          {humanifyZoom(zoom + level)}
-        </Controls>
+          zoomText={humanifyZoom(zoom + level)}
+        />
 
         <div className={styles.map} style={mapStyles}>
           {layerCells.map((column, index) => (
             <div className={styles.column} key={index}>
-              {column.map((row) => <Cell data={row} key={row.src} panEnd={panEnd} />)}
+              {column.map((row) => <Cell data={row} key={row.src} checkInViewport={calculateCellsInViewport} />)}
             </div>
           ))}
         </div>

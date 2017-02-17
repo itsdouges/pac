@@ -2,15 +2,13 @@
 
 import React, { Component } from 'react';
 import { withinViewport } from '../../lib/dom';
-import styles from './styles.css';
-import cx from 'classnames';
 
 type Props = {
   src: string,
   className?: string,
   draggable?: boolean,
   provideCallback?: (() => void) => void,
-  panEnd: boolean,
+  checkInViewport?: boolean,
 };
 
 type State = {
@@ -35,7 +33,7 @@ export default class LazyImage extends Component {
     return (
       (nextState.shown && !this.state.shown)
       || nextProps.src !== this.props.src
-      || (nextProps.panEnd && !this.props.panEnd)
+      || (!!nextProps.checkInViewport && !this.props.checkInViewport)
     );
   }
 
@@ -60,7 +58,7 @@ export default class LazyImage extends Component {
         ref={(c) => (this._image = c)}
         src={shown ? src : ''}
         role="presentation"
-        className={cx(styles.root, className, { [styles.shown]: shown })}
+        className={className}
         draggable={!!draggable}
       />
     );
