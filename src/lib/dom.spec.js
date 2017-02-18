@@ -4,10 +4,10 @@ const sandbox = sinon.sandbox.create();
 const hammerOn = sandbox.spy();
 const hammerOff = sandbox.spy();
 
-const Hammer = sandbox.spy(function () { return { on: hammerOn, off: hammerOff } });
+const Hammer = sandbox.spy(() => ({ on: hammerOn, off: hammerOff }));
 
 const dom = proxyquire('./dom', {
-  'hammerjs': Hammer,
+  hammerjs: Hammer,
 });
 
 describe('dom helpers', () => {

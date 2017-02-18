@@ -3,4 +3,3 @@
 --require test/setup
 --ui bdd
 --compilers js:babel-register
---full-trace

@@ -1,5 +1,3 @@
-// @flow
-
 import * as math from './math';
 
 describe('math', () => {

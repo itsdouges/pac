@@ -8,7 +8,7 @@ import debounce from 'lodash/debounce';
 
 import styles from './styles.css';
 import Controls from '../Controls';
-import Cell from '../Cell';
+import Column from '../Column';
 import { attachWheelEvent, attachPanEvents, styleTransform } from '../../lib/dom';
 import { roundToOne } from '../../lib/math';
 
@@ -26,8 +26,9 @@ type State = {
 };
 
 const ZOOM_DIVISOR = 500;
+const NOTIFY_COLUMNS_DEBOUNCE = 100;
 
-const humanifyZoom = (zoom, offset) => {
+const humanifyZoom = (zoom) => {
   const roundedZoom = roundToOne(zoom);
   const normalizedZoom = roundedZoom % 1 === 0 ? `${roundedZoom}.0` : roundedZoom;
   return `${normalizedZoom}x`;
@@ -37,10 +38,12 @@ export default class Map extends Component {
   _detatchWheelEvent: () => void;
   _detatchPanEvents: () => void;
   _container: HTMLElement;
+  // eslint-disable-next-line react/sort-comp
+  _deltaOffsetX: number = 0;
+  // eslint-disable-next-line react/sort-comp
+  _deltaOffsetY: number = 0;
 
-  deltaOffsetX: number = 0;
-  deltaOffsetY: number = 0;
-	props: Props;
+  props: Props;
   state: State = {
     x: 0,
     y: 0,
@@ -60,14 +63,15 @@ export default class Map extends Component {
     this._detatchPanEvents();
   }
 
-  onPanEnd = (e: any) => {
-    this.deltaOffsetX = this.state.x;
-    this.deltaOffsetY = this.state.y;
+  onPanEnd = () => {
+    this._deltaOffsetX = this.state.x;
+    this._deltaOffsetY = this.state.y;
 
     this.setState({
       panning: false,
-      calculateCellsInViewport: true,
     });
+
+    this.debouncedNotifyColumns();
   };
 
   onPan = (e: any) => {
@@ -76,8 +80,8 @@ export default class Map extends Component {
     this.setState({
       panning: true,
       calculateCellsInViewport: false,
-      x: this.deltaOffsetX + deltaX,
-      y: this.deltaOffsetY + deltaY,
+      x: this._deltaOffsetX + deltaX,
+      y: this._deltaOffsetY + deltaY,
     });
   };
 
@@ -99,7 +103,7 @@ export default class Map extends Component {
       newZoom = 0.5;
     }
 
-    this.debouncedNotifyCells();
+    this.debouncedNotifyColumns();
 
     return this.setState({
       calculateCellsInViewport: false,
@@ -107,11 +111,11 @@ export default class Map extends Component {
     });
   };
 
-  debouncedNotifyCells = debounce(() => {
+  debouncedNotifyColumns = debounce(() => {
     this.setState({
       calculateCellsInViewport: true,
     });
-  }, 100);
+  }, NOTIFY_COLUMNS_DEBOUNCE);
 
   increaseLevel = () => {
     const nextLevel = this.state.level + 1;
@@ -134,7 +138,7 @@ export default class Map extends Component {
   render () {
     const { level, zoom, x, y, panning, calculateCellsInViewport } = this.state;
     const { cells } = this.props;
-    const layerCells = cells[level];
+    const layerColumns = cells[level];
 
     const mapStyles = styleTransform({
       name: 'translate3d',
@@ -154,10 +158,13 @@ export default class Map extends Component {
         />
 
         <div className={styles.map} style={mapStyles}>
-          {layerCells.map((column, index) => (
-            <div className={styles.column} key={index}>
-              {column.map((row) => <Cell data={row} key={row.src} checkInViewport={calculateCellsInViewport} />)}
-            </div>
+          {layerColumns.map((column, index) => (
+            <Column
+              className={styles.column}
+              key={index}
+              data={column}
+              checkInViewport={calculateCellsInViewport}
+            />
           ))}
         </div>
       </div>

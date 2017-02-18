@@ -4,13 +4,15 @@ type CellData = {
   src: string,
 };
 
+export type Column = Array<CellData>;
+
 export type Cells = {
-  [depth: number]: Array<Array<CellData>>,
+  [level: number]: Array<Column>,
 };
 
 export default function cellify (context: any): Cells {
   const cells = context.keys().reduce((obj, fileName) => {
-    const [,level,column] = fileName.split('/');
+    const [, level, column] = fileName.split('/');
 
     const data = obj[level] || [];
     data[+column] = data[column] || [];

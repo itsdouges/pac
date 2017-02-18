@@ -1,5 +1,3 @@
-// @flow
-
 import cellify from './cellify';
 
 describe('cellify', () => {
@@ -18,14 +16,14 @@ describe('cellify', () => {
       '0': [
         [{
           src: keys[0],
-        }]
+        }],
       ],
       '1': [
         [{
           src: keys[1],
         }, {
           src: keys[2],
-        }]
+        }],
       ],
     });
   });

@@ -33,7 +33,7 @@ export default class LazyImage extends Component {
     );
   }
 
-  componentWillUpdate (nextProps: Props) {
+  componentWillUpdate () {
     this.calculateShown();
   }
 
@@ -53,7 +53,7 @@ export default class LazyImage extends Component {
       <img
         ref={(c) => (this._image = c)}
         src={shown ? src : ''}
-        role="presentation"
+        alt=""
         className={className}
         draggable={!!draggable}
       />

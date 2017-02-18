@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react';
 
 import { mount } from 'enzyme';
@@ -28,7 +26,7 @@ describe('<LazyImage />', () => {
   it('should render image with expected props', () => {
     expect(wrapper.find('img')).to.have.props({
       src: '',
-      role: 'presentation',
+      alt: '',
       className: props.className,
       draggable: false,
     });

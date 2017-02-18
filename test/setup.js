@@ -1,10 +1,6 @@
-import jsdom from 'jsdom';
+require('jsdom-global')();
 
-global.document = jsdom.jsdom('<html><body></body></html>');
-global.window = document.defaultView;
-global.navigator = window.navigator;
-
-function noop() {
+function noop () {
   return {};
 }
 
