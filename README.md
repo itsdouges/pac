@@ -1,6 +1,12 @@
 # Propeller Front End Coding Challenge
 
+[http://propeller-challenge.s3-website-us-east-1.amazonaws.com/](http://propeller-challenge.s3-website-us-east-1.amazonaws.com/)
+
 Looking at the task list I've basically implemented everything - the main reason being that this task was really fun and I really wanted to ship it with all the cooler features !
+
+Implemented features:
+- Basic functionality (zooming with +/- buttons)
+- Advanced functionality (panning, lazy loading images, smooth scrolling, styling)
 
 There are a few things I'd change if I were to do this challenge again:
 
